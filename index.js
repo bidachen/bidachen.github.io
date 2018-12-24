@@ -1,7 +1,7 @@
 
 
-function Button(props) {
-  var style = {
+class Button extends React.Component{
+  style = {
     height: 50,
     width: 200,
     border: "1px solid black",
@@ -9,11 +9,27 @@ function Button(props) {
     fontSize: 30
   }
 
-  return (
-    <button style={style} onClick={() => { props.click(props.select) }}>{props.select}
-    </button>
-  )
+
+
+    constructor(props) {
+        super(props)
+        this.text = props.select
+    }
+
+    render() {
+        // var style = { paddingLeft: "20%", }
+        // if (this.state.correct)
+        //     var res1 = "correct: " + this.state.sum
+        // else
+        //     var res2 = "incorrect: " + this.state.sum
+        return (
+            <button style={this.style}>
+                {this.text}
+            </button>
+        )
+    }
 }
+
 class Game extends React.Component {
   constructor(props) {
     super(props)
@@ -67,7 +83,7 @@ class Game extends React.Component {
         <div><Button click={this.click} select={this.state.sum - this.state.list[2]} /></div>
         <div><Button click={this.click} select={this.state.sum - this.state.list[3]} /></div>
         <div><Button click={this.click} select={this.state.sum - this.state.list[4]} /></div>
-        <div><Button click={this.new} select={"next"}/></div>
+        {/*<div><Button click={this.new} select={"next"}/></div>*/}
         <div style={style}>{this.state.hidden ? null : this.state.correct ? res1 : res2}</div>
       </div>
     )
