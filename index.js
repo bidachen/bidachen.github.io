@@ -20,7 +20,6 @@ class Game extends React.Component {
     this.state = { correct: false, hidden: true, l: 0, r: 0, sum: 0, list:0 }
     this.click = this.handleclick.bind(this)
     this.new=this.new.bind(this)
-    this.style = { paddingLeft: "50%", }
   }
 
   componentDidMount() {
@@ -55,6 +54,7 @@ class Game extends React.Component {
   }
 
   render() {
+    var style = { paddingLeft: "20%", }
     if (this.state.correct)
       var res1 = "correct: " + this.state.sum
     else
@@ -68,7 +68,7 @@ class Game extends React.Component {
         <div><Button click={this.click} select={this.state.sum - this.state.list[3]} /></div>
         <div><Button click={this.click} select={this.state.sum - this.state.list[4]} /></div>
         <div><Button click={this.new} select={"next"}/></div>
-        <div style={this.style}>{this.state.hidden ? null : this.state.correct ? res1 : res2}</div>
+        <div style={style}>{this.state.hidden ? null : this.state.correct ? res1 : res2}</div>
       </div>
     )
   }
