@@ -1,19 +1,22 @@
 
 
 class Button extends React.Component{
-  style = {
-    height: 50,
-    width: 200,
-    border: "1px solid black",
-    backgroundColor: "white",
-    fontSize: 30
-  }
-
-
+    style = {
+        height: 50,
+        width: 200,
+        border: "1px solid black",
+        backgroundColor: "white",
+        fontSize: 30
+    }
+    // state={
+    //     text :0
+    // }
 
     constructor(props) {
         super(props)
-        this.text = props.select
+        this.state({
+            text: props.select
+        });
     }
 
     render() {
@@ -24,7 +27,7 @@ class Button extends React.Component{
         //     var res2 = "incorrect: " + this.state.sum
         return (
             <button style={this.style}>
-                {this.text}
+                {this.state.text}
             </button>
         )
     }
@@ -78,12 +81,12 @@ class Game extends React.Component {
     return (
       <div>
         <h1>What is {this.state.l} + {this.state.r} ?</h1>
-        <div><Button click={this.click} select={this.state.sum - this.state.list[0]} /></div>
+        <div><Button click={this.click} select={89} /></div>
         <div><Button click={this.click} select={this.state.sum - this.state.list[1]} /></div>
         <div><Button click={this.click} select={this.state.sum - this.state.list[2]} /></div>
         <div><Button click={this.click} select={this.state.sum - this.state.list[3]} /></div>
         <div><Button click={this.click} select={this.state.sum - this.state.list[4]} /></div>
-        {/*<div><Button click={this.new} select={"next"}/></div>*/}
+        <div><Button click={this.new} select={"next"}/></div>
         <div style={style}>{this.state.hidden ? null : this.state.correct ? res1 : res2}</div>
       </div>
     )
