@@ -1,126 +1,140 @@
-class Button extends React.Component {
-    style = {
-        height: 50,
-        width: 200,
-        border: "1px solid black",
-        backgroundColor: "white",
-        fontSize: 30
-    }
+import React from "react";
+import ReactDOM from "react-dom";
 
-    constructor(props) {
+
+
+let temp={first:"jie",last:"lan",activity:"Science Lab",checkValue:[false,false,false]};
+
+class GetInput extends React.Component{
+    constructor(props){
         super(props)
-        this.state={text: this.props.select}
+        this.state={value:''}
+        this.handleChange = this.handleChange.bind(this)
     }
-    componentWillReceiveProps(props) {
-        this.setState({text: props.select})
+    handleChange(event) {
+        temp[this.props.id] = event.target.value;
     }
+    render(){
 
-    render() {
-
-        return (
-            <button style={this.style} onClick={() => {
-                this.props.click(this.state.text)}}>
-                {this.state.text}
-            </button>
-        )
+        return <div>
+            {this.props.string} name: <br></br><input id={this.props.string} type="text" onChange={this.handleChange}/>
+        </div>
     }
 }
 
-Button.defaultProps = {
-    select: "next",
-};
 
-class Game extends React.Component {
-    style = { paddingLeft: "20%", }
-    constructor(props) {
+class GetSelection extends React.Component{
+    constructor(props){
         super(props)
-        let list = [-2, -1, 0, 1, 2]
-        this.state = { correct: false, hidden: true, l: 0, r: 0, sum: 0, list: list, operator:0}
-        this.selection = this.selection.bind(this)
-        this.newGame = this.newGame.bind(this)
+        this.state={value:'Science Lab'}
+        this.handleChange = this.handleChange.bind(this)
+    }
+    handleChange(event) {
+        temp[this.props.id] = event.target.value;
+    }
+    render(){
+        return <select id="selection" value={this.state.value}onChange={this.handleChange}>
+            <option>Science Lab</option>
+            <option>Swimming</option>
+            <option>Cooking</option>
+            <option>Painting</option>
+        </select>
+    }
+}
+
+class CheckBox extends React.Component{
+    constructor(props){
+        super(props)
+        this.state={checked:false}
+        this.handleChange = this.handleChange.bind(this)
+    }
+    handleChange(event) {
+        this.setState({ checked: event.target.checked })
+        temp.checkValue[this.props.index] =!temp.checkValue[this.props.index]
+    }
+    render(){
+        return <div>
+            <input type="checkbox" checked={this.state.checked} onChange={this.handleChange}/>{this.props.string}<br></br>
+        </div>
+    }
+}
+
+
+function ResultTable(props) {
+    return <tr>
+        <th>{props.first}</th>
+        <th>{props.last}</th>
+        <th>{props.activity}</th>
+        {props.checkValue[0]?<th>"Dietary Restrictions"</th> : <th></th>}
+        {props.checkValue[1]?<th>"Physical Disabilities"</th> : <th></th>}
+        {props.checkValue[2]?<th>"Medical Needs""</th> : <th></th>}
+
+    </tr>
+}
+
+class App extends React.Component{
+    constructor(props){
+        super(props)
+        this.state={
+            list:[],
+            checkValue:["a) Dietary Restrictions", "b) Physical Disabilities","c) Medical Needs" ]
+
+        }
+        this.addCourse=this.addCourse.bind(this)
+        this.delCourse=this.delCourse.bind(this)
+        this.handleChange = this.handleChange(this)
+    }
+    addCourse(event){
+
+        this.setState(prevState => ({
+            list: [...prevState.list, this.clone(temp)]
+        }))
 
     }
-    selection(props) {
-        if (this.state.sum === props) {
-            this.setState({
-                correct: true,
-            });
-        }
-        this.setState({
-            hidden: false
+
+    clone (obj){
+        if(obj == null || typeof(obj) != 'object')
+            return obj;
+
+        var temp = new obj.constructor();
+        for(var key in obj)
+            temp[key] = (obj[key]);
+
+        return temp;
+    }
+    handleChange(event) {
+
+    }
+
+    delCourse(event){
+
+    }
+    render(){
+        let resultTable=this.state.list.map((item,index) => {
+            return <ResultTable id={index} first={item.first} last={item.last} activity={item.activity}  checkValue= {item.checkValue}/>
         });
-    }
+        return <div>
+            <GetInput string={"First"} id ="first" change ={this.handleChange}/>
+            <GetInput string={"Last"} id ="last" change ={this.handleChange} />
+
+            <GetSelection id ="activity"/>
+
+            {this.state.checkValue.map((value,index) => (
+                <div><CheckBox string={value} index={index} /></div>
+            ))}
 
 
-    componentDidMount(){
-        console.log("componendWillMount")
-        this.newGame()
-    }
+            <button onClick={this.addCourse}>submit</button>
+            <table>
+                {resultTable}
+            </table>
+        </div>
 
-    newGame(props) {
-        let list = [-2, -1, 0, 1, 2]
-        for (let i = 0; i < 5; i++) {
-            let n = Math.round(Math.random() * 4);
-            let m = list[0];
-            list[0] = list[n];
-            list[n] = m;
-        }
-        let l = Math.round(Math.random() * 100)
-        let r = Math.round(Math.random() * 100)
-        let sum = 0
-        let operator =  Math.floor(Math.random() * Math.floor(4))
-
-        switch(operator) {
-            case 0:
-                sum = l+r
-                break;
-            case 1:
-                sum = l-r
-                break;
-            case 2:
-                sum = l*r
-                break;
-            default:
-                sum = (l/r).toFixed(2)
-        }
-        console.log("left is"+l,"right is"+r,"sum is"+sum,"operatpor is"+operator)
-
-        this.setState({ correct: false, hidden: true, l: l, r: r, sum: sum, list: list ,operator:operator })
-
-    }
-
-    render() {
-        let operator
-        switch(this.state.operator) {
-            case 0:
-                operator = '+'
-                break;
-            case 1:
-                operator = '-'
-                break;
-            case 2:
-                operator = '*'
-                break;
-            default:
-                operator = '/'
-        }
-
-        let hint=this.state.correct?"correct: " + this.state.sum  :    "incorrect :  " + this.state.sum
-        return (
-            <div>
-                <h1>What is {this.state.l} {operator} {this.state.r} ?</h1>
-
-                <div>
-                    {this.state.list.map((listNum,index) => (
-                        <div><Button click={this.selection} select={this.state.operator == 3?(this.state.sum - listNum).toFixed(2):(this.state.sum - listNum)} key={index} /></div>
-                    ))}
-                </div>
-                <div><Button click={this.newGame} />   </div>
-                <div style={this.style}>{this.state.hidden ? null : hint}</div>
-            </div>
-        )
     }
 }
+
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<Game />, rootElement);
+ReactDOM.render(<App />, rootElement);
+
+
