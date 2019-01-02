@@ -1,126 +1,129 @@
-class Button extends React.Component {
-    style = {
-        height: 50,
-        width: 200,
-        border: "1px solid black",
-        backgroundColor: "white",
-        fontSize: 30
+import React from "react";
+import ReactDOM from "react-dom";
+import { Alert, Button, FormGroup, Label, Input } from "reactstrap";
+import "bootstrap/dist/css/bootstrap.css";
+import Calculation from "./calculation.js";
+import Question from "./question.js";
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      calculation: false,
+      questionApp: false,
+      question: "",
+      correct: "",
+      incorrect: [],
+      category: [
+        { id: 8, value: "simple calculation" },
+        { id: 9, value: "general knowledge" },
+        { id: 10, value: "entertainment: books" },
+        { id: 11, value: "entertainment: film" },
+        { id: 12, value: "entertainment: music" },
+        { id: 13, value: "entertainment: musicals & theatres" },
+        { id: 14, value: "entertainment: television" },
+        { id: 15, value: "entertainment: video games" },
+        { id: 16, value: "entertainment: board gmaes" },
+        { id: 17, value: "science & nature" },
+        { id: 18, value: "science: computers" },
+        { id: 19, value: "science: mathematics" },
+        { id: 20, value: "mythology" },
+        { id: 21, value: "sports" },
+        { id: 22, value: "geography" },
+        { id: 23, value: "history" },
+        { id: 24, value: "politics" },
+        { id: 25, value: "art" },
+        { id: 26, value: "celebrities" },
+        { id: 27, value: "animals" },
+        { id: 28, value: "vehicles" },
+        { id: 29, value: "entertainment:comics" },
+        { id: 30, value: "science: gadgets" },
+        { id: 31, value: "entertainment: Japanese anime & manga" },
+        { id: 32, value: "entertainment: cartoon & animations" }
+      ]
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(event) {
+    let categorySelect =
+      parseInt(document.querySelector("#categorySelect").value) + 7;
+    let difficultySelect = document.querySelector("#difficultySelect").value;
+    let typeSelect = document.querySelector("#typeSelect").value;
+    if (categorySelect === 8) {
+      this.setState({ calculation: true });
+      return null;
     }
+    typeSelect === "multiple choices"
+      ? (typeSelect = "multiple")
+      : (typeSelect = "boolean");
+    let url =
+      "https://opentdb.com/api.php?amount=1&category=" +
+      categorySelect +
+      "&difficulty=" +
+      difficultySelect +
+      "&type=" +
+      typeSelect;
+    fetch(url)
+      .then(res => res.json())
+      .then(
+        res => {
+          this.setState({
+            questionApp: true,
+            question: res.results[0].question,
+            correct: res.results[0].correct_answer,
+            incorrect: res.results[0].incorrect_answers
+          });
+        },
+        error => {
+          <Alert color="danger">Wrong selection!</Alert>;
+        }
+      );
+  }
+  render() {
+    let options = this.state.category.map((item, index) => {
+      return (
+        <option key={index}>
+          {index + 1}. {item.value}
+        </option>
+      );
+    });
+    if (this.state.questionApp)
+      return (
+        <Question
+          question={this.state.question}
+          correct={this.state.correct}
+          incorrect={this.state.incorrect}
+        />
+      );
+    if (this.state.calculation) return <Calculation />;
+    return (
+      <div>
+        <h2>Test yourself</h2>
+        <FormGroup>
+          <Label for="categorySelect">Select category</Label>
+          <Input type="select" name="select" id="categorySelect">
+            {options}
+          </Input>
+        </FormGroup>
+        <FormGroup>
+          <Label for="difficultySelect">Select difficulty</Label>
+          <Input type="select" name="select" id="difficultySelect">
+            <option>easy</option>
+            <option>medium</option>
+            <option>hard</option>
+          </Input>
+        </FormGroup>
+        <FormGroup>
+          <Label for="typeSelect">Select type</Label>
+          <Input type="select" name="select" id="typeSelect">
+            <option>multiple choices</option>
+            <option>true / false</option>
+          </Input>
+        </FormGroup>
 
-    constructor(props) {
-        super(props)
-        this.state={text: this.props.select}
-    }
-    componentWillReceiveProps(props) {
-        this.setState({text: props.select})
-    }
-
-    render() {
-
-        return (
-            <button style={this.style} onClick={() => {
-                this.props.click(this.state.text)}}>
-                {this.state.text}
-            </button>
-        )
-    }
+        <Button onClick={this.handleSubmit}>Submit</Button>
+      </div>
+    );
+  }
 }
 
-Button.defaultProps = {
-    select: "next",
-};
-
-class Game extends React.Component {
-    style = { paddingLeft: "20%", }
-    constructor(props) {
-        super(props)
-        let list = [-2, -1, 0, 1, 2]
-        this.state = { correct: false, hidden: true, l: 0, r: 0, sum: 0, list: list, operator:0}
-        this.selection = this.selection.bind(this)
-        this.newGame = this.newGame.bind(this)
-
-    }
-    selection(props) {
-        if (this.state.sum === props) {
-            this.setState({
-                correct: true,
-            });
-        }
-        this.setState({
-            hidden: false
-        });
-    }
-
-
-    componentDidMount(){
-        console.log("componendWillMount")
-        this.newGame()
-    }
-
-    newGame(props) {
-        let list = [-2, -1, 0, 1, 2]
-        for (let i = 0; i < 5; i++) {
-            let n = Math.round(Math.random() * 4);
-            let m = list[0];
-            list[0] = list[n];
-            list[n] = m;
-        }
-        let l = Math.round(Math.random() * 100)
-        let r = Math.round(Math.random() * 100)
-        let sum = 0
-        let operator =  Math.floor(Math.random() * Math.floor(4))
-
-        switch(operator) {
-            case 0:
-                sum = l+r
-                break;
-            case 1:
-                sum = l-r
-                break;
-            case 2:
-                sum = l*r
-                break;
-            default:
-                sum = (l/r).toFixed(2)
-        }
-        console.log("left is"+l,"right is"+r,"sum is"+sum,"operatpor is"+operator)
-
-        this.setState({ correct: false, hidden: true, l: l, r: r, sum: sum, list: list ,operator:operator })
-
-    }
-
-    render() {
-        let operator
-        switch(this.state.operator) {
-            case 0:
-                operator = '+'
-                break;
-            case 1:
-                operator = '-'
-                break;
-            case 2:
-                operator = '*'
-                break;
-            default:
-                operator = '/'
-        }
-
-        let hint=this.state.correct?"correct: " + this.state.sum  :    "incorrect :  " + this.state.sum
-        return (
-            <div>
-                <h1>What is {this.state.l} {operator} {this.state.r} ?</h1>
-
-                <div>
-                    {this.state.list.map((listNum,index) => (
-                        <div><Button click={this.selection} select={this.state.operator == 3?(this.state.sum - listNum).toFixed(2):(this.state.sum - listNum)} key={index} /></div>
-                    ))}
-                </div>
-                <div><Button click={this.newGame} />   </div>
-                <div style={this.style}>{this.state.hidden ? null : hint}</div>
-            </div>
-        )
-    }
-}
-
-const rootElement = document.getElementById("root");
-ReactDOM.render(<Game />, rootElement);
+ReactDOM.render(<App />, document.querySelector("#root"));
