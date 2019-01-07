@@ -30,13 +30,18 @@ class Question extends React.Component {
     this.state.correct === tempValue
       ? (tempList[tempIndex] = "Correct!")
       : (tempList[tempIndex] = "Incorrect!");
-    if (this.state.selection.index !== null)
+    if (
+      this.state.selection.index !== null &&
+      this.state.selection.value !== "Correct!" &&
+      this.state.selection.value !== "Incorrect!"
+    )
       tempList[this.state.selection.index] = this.state.selection.value;
     this.setState({
       answers: tempList,
       selection: { index: tempIndex, value: tempValue }
     });
     console.log(this.state.answers);
+    console.log(this.state.selection);
   }
   handleClick(event) {}
   render() {
